@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_activities",
+  "info": {
+    "singularName": "user-activity",
+    "pluralName": "user-activities",
+    "displayName": "User Activity"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Customer_name": {
+      "type": "string"
+    },
+    "Purpose": {
+      "type": "string"
+    },
+    "Date_Time": {
+      "type": "datetime"
+    },
+    "first_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "second_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "third_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "fourth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "fifth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "sixth_link": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
