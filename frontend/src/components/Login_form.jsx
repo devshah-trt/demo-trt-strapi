@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Login_form.css';
-
+import { useNavigate} from 'react-router-dom';
+const STRAPI_URL = import.meta.env.VITE_STRAPI_URL;
 const Login_form = () => {
+  const navigate=useNavigate();
   const [formData, setFormData] = useState({
     Email: '',
     Password: '',
@@ -24,6 +26,7 @@ const Login_form = () => {
   // Clear token when landing on login page
   useEffect(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('currentActivityId');
   }, []);
 
   const validateField = (name, value) => {
@@ -111,7 +114,7 @@ const Login_form = () => {
     try {
       // Authenticate user with Strapi
       const loginResponse = await axios.post(
-        "http://localhost:1337/api/user-detail/login", 
+        `${STRAPI_URL}/api/user-detail/login`, 
         {
           identifier: formData.Email.toLowerCase(),
           password: formData.Password
@@ -131,15 +134,19 @@ const Login_form = () => {
         
         // Store user activity in Strapi
         try {
+          // Get current date and time in ISO format
+          const currentDateTime = new Date().toISOString();
+          
           const requestData = {
             data: {
               Customer_name: formData.Customer_name,
-              Purpose: formData.Purpose
+              Purpose: formData.Purpose,
+              Date_Time: currentDateTime
             }
           };
 
           const activityResponse = await axios.post(
-            "http://localhost:1337/api/user-activities",
+            `${STRAPI_URL}/api/user-activities`,
             requestData,
             {
               headers: {
@@ -148,6 +155,14 @@ const Login_form = () => {
               }
             }
           );
+          if (activityResponse.data && activityResponse.data.data) {
+            console.log('Full activity response:', activityResponse.data);
+            const activityId = activityResponse.data.data.id;
+            localStorage.setItem('currentActivityId', activityId);
+            console.log('Activity created with ID:', activityId);
+          } else {
+            console.log('Activity response structure:', activityResponse.data);
+          }
 
         } catch (activityError) {
           console.error('Error details:', {
@@ -162,7 +177,7 @@ const Login_form = () => {
         setSuccess('Login successful!');
         
         // Optional: Redirect to dashboard or home page
-        window.location.href = '/card';
+        navigate('/card');
       }
     } catch (error) {
       // Handle login errors

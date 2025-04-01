@@ -1,0 +1,14 @@
+{
+  "kind": "collectionType",
+  "collectionName": "card_infos",
+  "info": {
+    "singularName": "card-info",
+    "pluralName": "card-infos",
+    "displayName": "card-info",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {}
+}

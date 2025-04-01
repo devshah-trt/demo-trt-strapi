@@ -4,7 +4,8 @@
   "info": {
     "singularName": "user-activity",
     "pluralName": "user-activities",
-    "displayName": "User Activity"
+    "displayName": "User Activity",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -40,6 +41,30 @@
       "default": false
     },
     "sixth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "seventh_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "eighth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "ninth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "tenth_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "eleventh_link": {
+      "type": "boolean",
+      "default": false
+    },
+    "twelfth_link": {
       "type": "boolean",
       "default": false
     }

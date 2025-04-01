@@ -470,6 +470,34 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCardInfoCardInfo extends Struct.CollectionTypeSchema {
+  collectionName: 'card_infos';
+  info: {
+    description: '';
+    displayName: 'card-info';
+    pluralName: 'card-infos';
+    singularName: 'card-info';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::card-info.card-info'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -538,6 +566,7 @@ export interface ApiUserActivityUserActivity
   extends Struct.CollectionTypeSchema {
   collectionName: 'user_activities';
   info: {
+    description: '';
     displayName: 'User Activity';
     pluralName: 'user-activities';
     singularName: 'user-activity';
@@ -551,6 +580,8 @@ export interface ApiUserActivityUserActivity
       Schema.Attribute.Private;
     Customer_name: Schema.Attribute.String;
     Date_Time: Schema.Attribute.DateTime;
+    eighth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    eleventh_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     fifth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     first_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     fourth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -560,11 +591,15 @@ export interface ApiUserActivityUserActivity
       'api::user-activity.user-activity'
     > &
       Schema.Attribute.Private;
+    ninth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     Purpose: Schema.Attribute.String;
     second_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    seventh_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     sixth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    tenth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     third_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    twelfth_link: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1113,6 +1148,7 @@ declare module '@strapi/strapi' {
       'api::about.about': ApiAboutAbout;
       'api::article.article': ApiArticleArticle;
       'api::author.author': ApiAuthorAuthor;
+      'api::card-info.card-info': ApiCardInfoCardInfo;
       'api::category.category': ApiCategoryCategory;
       'api::global.global': ApiGlobalGlobal;
       'api::user-activity.user-activity': ApiUserActivityUserActivity;
