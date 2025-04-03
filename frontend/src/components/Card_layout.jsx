@@ -51,9 +51,60 @@ const Card_layout = () => {
       twelfth_link:false,
     }
   );
+  const [features, setFeatures] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Fetch card data from API
+  useEffect(() => {
+    // Flag to track if component is mounted
+    let isMounted = true;
+    
+    const fetchCardData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${STRAPI_URL}/api/card-infos?filters[isActive][$eq]=true`);
+        
+        // Only update state if component is still mounted
+        if (isMounted) {
+          // console.log('Card data fetched successfully:', res.data.data);
+          
+          // Process the API response data
+          const processedFeatures = res.data.data.map(item => {
+            // Extract data from attributes if present (Strapi v4 format)
+            const featureData = item.attributes || item;
+            return {
+              id: featureData.card_id,
+              title: featureData.title,
+              description: featureData.description,
+              link: featureData.link
+            };
+          });
+          
+          // console.log('Processed features:', processedFeatures);
+          setFeatures(processedFeatures);
+          setLoading(false);
+        }
+      } catch (err) {
+        // Only update state if component is still mounted
+        if (isMounted) {
+          console.error('Error fetching card data:', err);
+          setError(err.message);
+          setLoading(false);
+        }
+      }
+    };
+    
+    fetchCardData();
+    
+    // Cleanup function for when component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, [visitedLinks]);
 
   // Check for authentication on component mount and handle cleanup
   useEffect(() => {
@@ -78,82 +129,6 @@ const Card_layout = () => {
     navigate('/', { replace: true }); // Use replace to prevent back navigation
   };
 
-  const features =   [
-    {
-      "id": "first_link",
-      "title": "Driver Performance Analytics",
-      "description": "Advanced analytics tool that helps DSPs track and improve driver metrics with detailed suggestions for enhancing safety scores, delivery rates, and overall performance.",
-      "link": "https://trt-demo-performance-improver.demotrt.com"
-    },
-    {
-      "id": "second_link",
-      "title": "Intelligent Driver Screening",
-      "description": "AI-powered interview system that conducts structured driver screening conversations, evaluates responses against customizable criteria, and streamlines your hiring process.",
-      "link": "https://trt-demo-driver-screening.demotrt.com"
-    },
-    {
-      "id": "third_link",
-      "title": "Professional Content Generator",
-      "description": "Smart content creation tool that produces tailored communications for SMS, emails, social media posts, and formal documents with proper formatting and professional tone.",
-      "link": "https://trt-demo-content-generator.demotrt.com"
-    },
-    {
-      "id": "fourth_link",
-      "title": "Advanced Grammar Assistant",
-      "description": "Comprehensive writing tool that identifies grammar errors, checks for plagiarism, improves readability, and provides style suggestions to enhance your communication quality.",
-      "link": "https://trt-demo-grammer-checker.demotrt.com"
-    },
-    {
-      "id": "fifth_link",
-      "title": "Document Intelligence System",
-      "description": "Powerful document RAG system that processes various file formats, allows natural language queries, and provides AI-generated answers with source references from your documents.",
-      "link": "https://trt-demo-document-assistant.demotrt.com"
-    },
-    {
-      "id": "sixth_link",
-      "title": "Answer Verification System",
-      "description": "Sophisticated verification tool that evaluates the accuracy of responses, provides confidence scores, and helps ensure information quality across all communication channels.",
-      "link": "https://trt-demo-answer-verifier.demotrt.com"
-    },
-    {
-      "id": "seventh_link",
-      "title": "Medical Assistant Platform",
-      "description": "Specialized healthcare tool that provides medical information, assists with symptom analysis, and offers guidance while maintaining strict compliance with healthcare standards.",
-      "link": "https://trt-demo-medical-assistant.demotrt.com"
-    },
-    {
-      "id": "eighth_link",
-      "title": "Video Transcription & Analysis",
-      "description": "Comprehensive video processing system that transcribes content, extracts key insights, and enables searchable video libraries with accurate timestamps and content summaries.",
-      "link": "https://trt-demo-video-transcriber.demotrt.com"
-    },
-    {
-      "id": "ninth_link",
-      "title": "Interior Design Visualization",
-      "description": "Creative design tool that generates customized interior designs based on room type, style preferences, and specific requirements with detailed cost estimates for implementation.",
-      "link": "https://trt-demo-interior-designer.demotrt.com"
-    },
-    {
-      "id": "tenth_link",
-      "title": "Course Correct",
-      "description": "Find your perfect course with our Friendly AI Browsing through thousands of courses is inefficient. You need someone to do the work for you...  You need CourseCorrect",
-      "link": "https://coursecorrect.fyi"
-    },
-    {
-      "id":"eleventh_link",
-      "title":"Course Correct",
-      "description":"Find your perfect course with our Friendly AI Browsing through thousands of courses is inefficient. You need someone to do the work for you...  You need CourseCorrect",
-      "link":"https://trt-demo-auction-listing.demotrt.com"
-    },
-    {
-      "id":"twelfth_link",
-      "title":"Course Correct",
-      "description":"Find your perfect course with our Friendly AI Browsing through thousands of courses is inefficient. You need someone to do the work for you...  You need CourseCorrect",
-      "link":"https://trt-demo-event-booking.demotrt.com"
-    }
-  ]
-
-  
   const handleNavigation = (link) => {
     if (!link) return;
 
@@ -166,6 +141,7 @@ const Card_layout = () => {
       navigate(link);
     }
   };
+  
   const handleCount=async(id)=>
     { 
       const jwt=localStorage.getItem('token');
@@ -229,21 +205,31 @@ const Card_layout = () => {
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
       </div>
 
-      <div className="features-grid">
-        {features.map((feature, index) => (
-          <div 
-            key={index} 
-            className="feature-card cursor-pointer" 
-            onClick={() => {
-              handleNavigation(feature.link);
-              handleCount(feature.id);
-            }}
-          >
-            <h2>{feature.title}</h2>
-            <p>{feature.description}</p>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="loading-container">
+          <p>Loading features...</p>
+        </div>
+      ) : error ? (
+        <div className="error-container">
+          <p>Error loading features: {error}</p>
+        </div>
+      ) : (
+        <div className="features-grid">
+          {features.map((feature, index) => (
+            <div 
+              key={index} 
+              className="feature-card cursor-pointer" 
+              onClick={() => {
+                handleNavigation(feature.link);
+                handleCount(feature.id);
+              }}
+            >
+              <h2>{feature.title}</h2>
+              <p>{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

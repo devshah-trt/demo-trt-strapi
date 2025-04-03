@@ -10,5 +10,22 @@
   "options": {
     "draftAndPublish": true
   },
-  "attributes": {}
+  "attributes": {
+    "card_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "link": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    }
+  }
 }
